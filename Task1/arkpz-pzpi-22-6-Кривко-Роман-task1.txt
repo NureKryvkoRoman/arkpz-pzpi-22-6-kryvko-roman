@@ -1,0 +1,83 @@
+﻿Vision and Scope Document
+for
+AutoGreenhouse
+Version 1.0 approved
+Prepared by Roman Kryvko
+AutoGreenhouse
+10.11.2024
+Table of Contents
+
+
+Table of Contents
+Revision History
+1.        Business Requirements
+1.1.        Background
+1.2.        Business Opportunity
+1.3.        Business Objectives and Success Criteria
+1.4.        Customer or Market Needs
+1.5.        Business Risks
+2.        Vision of the Solution
+2.1.        Vision Statement
+2.2.        Major Features
+2.3.        Assumptions and Dependencies
+3.        Scope and Limitations
+3.1.        Scope of Initial Release
+3.2.        Scope of Subsequent Releases
+3.3.        Limitations and Exclusions
+4.        Business Context
+4.1.        Stakeholder Profiles
+4.2.        Project Priorities
+4.3.        Operating Environment
+
+
+1. Business Requirements
+   1. Background
+Необхідність підвищення ефективності тепличного господарства вимагають впровадження сучасних рішень для автоматизації моніторингу стану рослин. Звичайні методи контролю часто є витратними та неефективними, оскільки потребують регулярного втручання людини для оцінки стану рослин, умов навколишнього середовища та прийняття рішень щодо поливу, освітлення тощо. Інтеграція IoT-рішень у теплиці дозволяє автоматизувати ці процеси, забезпечуючи точний та своєчасний моніторинг ключових параметрів.
+   2. Business Opportunity
+Фермери прагнуть оптимізувати витрати ресурсів і підвищити врожайність. Наявні рішення часто або занадто дорогі для невеликих тепличних господарств, або не забезпечують необхідної гнучкості для різних умов. Розробка системи для автоматичного контролю стану рослин у теплицях відкриває можливості для:
+* Оптимізації процесів вирощування через автоматизацію;
+* Скорочення витрат на воду, електроенергію та людські ресурси;
+* Підвищення врожайності за рахунок точного моніторингу параметрів;
+* Уникнення втрат через виявлення критичних ситуацій у реальному часі.
+   1. Business Objectives and Success Criteria
+Автоматизація моніторингу: Впровадження системи, яка дозволить зменшити ручну роботу через використання сенсорів та автоматизованих механізмів.
+Економія ресурсів: Скорочення витрат на воду за рахунок оптимізованого поливу на основі даних.
+Інтеграція та масштабованість: Забезпечення гнучкого API для інтеграції з іншими системами та підтримка різних масштабів господарств — від малих до великих.
+Доступність: Запуск MVP через 6 місяців після початку проєкту.
+Критерії успіху:
+* Позитивні відгуки від перших 50 клієнтів.
+* 90% точність у виявленні критичних ситуацій на основі тестових сценаріїв.
+* Успішна інтеграція мобільного додатка, веб-інтерфейсу та IoT-рішень.
+   1. Customer or Market Needs
+Моніторинг у реальному часі: Доступ до показників вологості, температури та освітленості через мобільний додаток і веб-інтерфейс.
+Оповіщення: Своєчасне інформування користувачів про аномальні параметри чи несправності.
+Історія даних: Збереження історії показників для аналізу продуктивності теплиці.
+Дистанційне керування: Можливість змінювати налаштування системи (наприклад, увімкнення поливу чи освітлення) через мобільний чи веб-додаток.
+Інтеграція із сучасними стандартами: Сумісність з популярними IoT-пристроями та сенсорами.
+   2. Business Risks
+Конкуренція: Наявність інших IoT-рішень на ринку може ускладнити позиціонування продукту.
+* Міри: Проведення аналізу конкурентів для створення унікальної пропозиції.
+Залежність від апаратного забезпечення: Проблеми з інтеграцією сторонніх сенсорів та пристроїв.
+* Міри: Використання гнучкого API та підтримка популярних стандартів IoT.
+Користувацьке прийняття: Можливі складнощі з розумінням роботи системи кінцевими користувачами.
+* Міри: Розробка інтуїтивного інтерфейсу, створення інструкцій та навчальних матеріалів.
+Технічні збої: Ризик некоректної роботи сенсорів або збою серверної частини.
+* Міри: Впровадження механізмів резервного копіювання та системи сповіщень про технічні проблеми.
+2. Vision of the Solution
+<This section establishes a long-term vision for the system to be built to address the business objectives. This vision will provide the context for making decisions throughout the course of the product development life cycle. The vision should not include detailed functional requirements or project planning information.>
+   3. Vision Statement
+<Write a concise vision statement that summarizes the purpose and intent of the new product and describes what the world will be like when it includes the product. The vision statement should reflect a balanced view that will satisfy the needs of diverse customers as well as those of the developing organization. It may be somewhat idealistic, but it should be grounded in the realities of existing or anticipated customer markets, enterprise architectures, organizational strategic directions, and cost and resource limitations.>
+   4. Major Features
+<Include a numbered list of the major features of the new product, emphasizing those features  that distinguish it from previous or competing products. Specific user requirements and functional requirements may be traced back to these features.>
+   5. Assumptions and Dependencies
+<Record any assumptions that were made when conceiving the project and writing this vision and scope document. Note any major dependencies the project must rely upon for success, such as specific technologies, third-party vendors, development partners, or other business relationships.>
+3. Scope and Limitations
+<The project scope defines the concept and range of the proposed solution. It’s also important to define what will not be included in the product. Clarifying the scope and limitations helps to establish realistic expectations of the many stakeholders. It also provides a reference frame against which proposed features and requirements changes can be evaluated. Proposed requirements that are out of scope for the envisioned product must be rejected, unless they are so beneficial that the scope should be enlarged to accommodate them (with accompanying changes in budget, schedule, and/or resources).>
+   6. Scope of Initial Release
+<Describe the intended major features that will be included in the initial release of the product. Consider the benefits the product is intended to bring to the various customer communities, and generally describe the product features and quality characteristics that will enable it to provide those benefits. Avoid the temptation to include every possible feature that any potential customer category might conceivably want some day. Focus on those features and product characteristics that will provide the most value, at the most acceptable development cost, to the broadest community.>
+   7. Scope of Subsequent Releases
+   8. Limitations and Exclusions
+4. Business Context
+   1. Stakeholder Profiles
+   2. Project Priorities
+   3. Operating Environment
