@@ -1,0 +1,6 @@
+[package]
+name = "arkpz-pzpi-22-6-kryvko-roman-pract1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
