@@ -167,3 +167,7 @@ ________________
 The Rust Style Guide. https://doc.rust-lang.org/style-guide/
 The Rust Programming Language. https://doc.rust-lang.org/book/
 rustfmt documentation. https://rust-lang.github.io/rustfmt/
+
+ДОДАТОК А
+Посилання на відео
+https://youtu.be/DXRllo2CGQ0
