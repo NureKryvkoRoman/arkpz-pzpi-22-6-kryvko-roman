@@ -1,0 +1,19 @@
+@startuml
+actor "Адміністратор" as Admin
+
+frame "Підсистема 'Адміністрування'" {
+    usecase "Керувати обліковими записами користувачів" as UC1
+    usecase "Переглядати системної інформації" as UC2
+    usecase "Додати нового користувача" as UC11
+    usecase "Видалити користувача" as UC12
+    usecase "Редагувати дозволи користувача" as UC13
+
+    Admin --> UC1
+    Admin --> UC2
+
+    UC1 .> UC11 : includes
+    UC1 .> UC12 : includes
+    UC1 .> UC13 : includes
+}
+
+@enduml

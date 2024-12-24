@@ -1,0 +1,17 @@
+@startuml
+actor "Користувач" as User
+
+frame "Підсистема моніторингу стану теплиць" {
+    usecase "Переглядати даних сенсорів в реальному часі" as UC1
+    usecase "Отримувати сповіщення" as UC2
+    usecase "Створювати системні сповіщення" as UC3 <<система>>
+    usecase "Переглядати історичні дані" as UC4
+    usecase "Переглядати деталі сповіщення" as UC6
+
+    User --> UC1
+    User --> UC2
+    UC2 .> UC3 : includes
+    UC5 --> UC6
+    User --> UC4
+}
+@enduml

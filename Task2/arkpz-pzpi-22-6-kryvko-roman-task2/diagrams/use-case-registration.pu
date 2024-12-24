@@ -1,0 +1,29 @@
+@startuml
+actor "Користувач" as User
+
+frame "Підсистема керування обліковим записом" {
+    usecase "Зареєструвати обліковий запис" as UC1
+    usecase "Увійти в обліковий запис" as UC2
+    usecase "Керувати підпискою" as UC3
+
+    usecase "Створити нового користувача" as UC4
+    usecase "Перевірити, чи існує користувач" as UC41
+    usecase "Перевірити вхідні дані" as UC42
+    usecase "Авторизувати користувача" as UC5
+    usecase "Перевірити вхідні дані" as UC51
+    usecase "Оновлення дозволів і даних підписки" as UC6
+
+    User --> UC1
+    User --> UC2
+    User --> UC3
+
+    UC1 --> UC4
+    UC4 .> UC41 : includes
+    UC4 .> UC42 : includes
+
+    UC2 --> UC5
+    UC5 .> UC51 : includes
+
+    UC3 --> UC6
+}
+@enduml
