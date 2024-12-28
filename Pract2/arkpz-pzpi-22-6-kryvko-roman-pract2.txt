@@ -1,0 +1,255 @@
+Харківський національний університет радіоелектроніки
+Факультет комп’ютерних наук
+Кафедра програмної інженерії
+
+
+ЗВІТ
+до практичного заняття з дисципліни
+"Аналіз та рефакторинг коду"
+(завдання №2)
+
+
+
+Виконав:
+ст. гр. ПЗПІ-22-6 
+Кривко Р.А.
+Перевірив:
+ст. викладач кат. ПІ
+Сокорчук І.П.
+
+Харків 2024
+
+
+________________
+2 Методи рефакторингу коду програмного забезпечення
+2.1 Мета
+Навчити студентів основним методам рефакторингу коду на основі реальних прикладів з їхніх власних програмних проєктів. Студенти повинні навчитися ідентифікувати проблеми в коді та використовувати відповідні методи рефакторингу для покращення його якості.
+
+
+2.2 Хід роботи
+Рефакторинг є дуже важливим аспектом розробки програмного забезпечення, який дозволяє розробникам покращувати структуру коду, не змінюючи його функціональність. У ході цієї роботи буде розглянути три методи: Replace Delegation with Inheritance (заміна композиції успадкуванням), Replace Inheritance with Delegation (заміна успадкування композицією) та Replace Type Code with State/Strategy (заміна кодування типу станом/стратегією). Кожен підхід має свої переваги та недоліки, а також застосовується у окремих сценаріях, що часто робить їх ситуаційними інструментами, а не універсальними рішеннями.
+
+
+2.2.1 Replace Delegation with Inheritance
+Розглянемо фрагмент коду до рефакторингу:
+
+
+         1        class PrintService {
+         2            void print(String message) {
+         3                System.out.println("Printing: " + message);
+         4            }
+         5        }
+
+
+         6        class Printer {
+         7            private PrintService printService = new PrintService();
+
+
+         8            void printMessage(String message) {
+         9                printService.print(message);
+        10            }
+        11        }
+        Як можна побачити, клас Printer пов’язаний з класом PrintService композицією: екземпляр класу PrintService є частиною класу Printer. Чому вибір методу “Replace Delegation with Inheritance” (заміна композиції успадкуванням) є гарним вибором у цьому випадку? Тому, що клас Printer не має функціоналу, який потребував би окремого екземпляру PrintService. Метод Printer::printMessage просто делегує виклик до printService::print, що є надлишковим. Замінимо композицію успадкуванням, щоб позбутися  цього.
+Розглянемо фрагмент коду після рефакторингу:
+
+        1        class Printer extends PrintService {
+         2        }
+
+
+         3        // Приклад використання
+         4        Printer printer = new Printer();
+         5        printer.print("Message");
+
+
+        Як можна побачити, проміжне делегування було видалено, зменшуючи надлишковість і спрощуючи дизайн. Обсяг коду було зменшено. Усі методи делегування більше не потрібні.
+
+
+2.2.2 Replace Inheritance with Delegation
+        З іншого боку, часто буває доцільно замінити успадкування композицією. Цей метод допомагає перейти від тісно пов’язаної ієрархії успадкування до більш гнучкої моделі делегування. Тут поведінка, традиційно успадкована від надкласу, замість цього забезпечується окремим класом, а вихідний клас посилається на цей зовнішній постачальник поведінки. Цей метод покращує модульність коду і можливості тестування, оскільки класи стають більш незалежними один від одного. Дуже популярний варіант використання — це коли підклас використовує лише частину функціональних можливостей свого батька або коли різні екземпляри одного класу вимагають різної поведінки. Делегування є найкориснішим у цих сценаріях, дозволяючи розробникам замінювати або змінювати компоненти з мінімальною прив’язкою, а також визначати поведінку об’єкта динамічно під час виконання програми.
+        Проблема: існує багато класів зі схожим функціоналом, для яких треба визначити різну поведінку. Найпростіше рішення - це використання реалізації інтерфейсу. Код до рефакторингу:
+
+
+     1  interface TextFormatter {
+     2      String formatText(String message);
+     3  }
+
+
+     4  // TextPrinter реалізує інтерфейс TextFormatter напряму
+     5  class TextPrinter implements TextFormatter {
+     6      @Override
+     7      public String formatText(String message) {
+     8          if (message.length() % 2 == 0) {
+     9              return message.toUpperCase();
+    10          } else {
+    11              return message.toLowerCase();
+    12          }
+    13      }
+    14  }
+
+
+    15  // Приклад використання
+    16  public class PrintMessages {
+    17      public static void main(String[] args) {
+    18          TextPrinter printer = new TextPrinter();
+    19          System.out.println(printer.formatText("Message"));
+    20          System.out.println(printer.formatText("Another message"));
+    21      }
+    22  }
+
+
+        Як можна побачити, клас TextPrinter  наразі реалізує інтерфейс TextFormatter напряму. Це не є  оптимальним рішенням проблеми, адже ми не можемо змінювати поведінку класу динамічно. Для розширення функціоналу класу при зміні коду прийдеться додавати та реалізовувати нові методи безпосередньо до класу та інтерфейсу. До того ж, якщо виникне необхідність розробити ще один клас зі схожим функціоналом, всі методи інтерфейсу необхідно буде реалізовувати знов у ручному режимі, що потенційно призведе до великих обсягів вихідного коду і його дуплікації. Замінимо успадкування композицією:
+
+
+     1  interface TextFormatter {
+     2      String formatText(String message);
+     3  }
+
+
+     4  // Конкретні реалізації для різних варіантів поведінки
+     5  class UpperCaseFormatter implements TextFormatter {
+     6      @Override
+     7      public String formatText(String message) {
+     8          return message.toUpperCase();
+     9      }
+    10  }
+
+
+    11  class LowerCaseFormatter implements TextFormatter {
+    12      @Override
+    13      public String formatText(String message) {
+    14          return message.toLowerCase();
+    15      }
+    16  }
+
+
+    17  class ReverseFormatter implements TextFormatter {
+    18      @Override
+    19      public String formatText(String message) {
+    20          return new StringBuilder(message).reverse().toString();
+    21      }
+    22  }
+
+
+    23  class TextPrinter {
+    24      private TextFormatter formatter;
+
+
+    25      public TextPrinter(TextFormatter formatter) {
+    26          this.formatter = formatter;
+    27      }
+
+
+    28      public void setFormatter(TextFormatter formatter) {
+    29          this.formatter = formatter;
+    30      }
+
+
+    31      // Делегування
+    32      public String print(String message) {
+    33          return formatter.formatText(message);
+    34      }
+    35  }
+
+
+    36  // Приклад використання
+    37  public class DemoAfter {
+    38      public static void main(String[] args) {
+    39          TextPrinter printer = new TextPrinter(new UpperCaseFormatter());
+    40          System.out.println(printer.print("Message"));
+
+
+    41          printer.setFormatter(new LowerCaseFormatter());
+    42          System.out.println(printer.print("Message"));
+
+
+    43          printer.setFormatter(new ReverseFormatter());
+    44          System.out.println(printer.print("Message"));
+    45      }
+    46  }
+
+
+Розглянемо код після рефакторингу: клас TextPrinter делегує відповідальність за форматування взаємозамінному члену класу TextFormatter. Додавання нового формату передбачає лише створення нового класу, що реалізує інтерфейс, дотримуючись принципу відкритості/закритості. Я можна побачити з прикладу використання, новий підхід дозволяє нам реалізовувати різну поведінку для класу, а також змінювати її під час виконання програми, без жодної потреби змінювати клас. Цей підхід робить код більш гнучким і придатним для багаторазового використання, дозволяючи динамічно змінювати логіку без зміни існуючих класів.
+
+
+2.2.3 Replace Type Code with State/Strategy
+Ще один важливий метод рефакторингу — «Заміна кодування типу станом або стратегією». Ця техніка стосується випадків, коли клас використовує код типу для визначення різних дій, що призводить до надто великої та заплутаної умовної логіки, яку важко підтримувати. Впроваджуючи шаблони стану або стратегії, розробники інкапсулюють різні поведінки в окремі класи, покращуючи модульність і читабельність.  Розглянемо випадок, де у нас є клас “Employee” із полем типу, яке визначає роль працівника та відповідну логіку розрахунку зарплати. Код до рефакторингу:
+
+
+         1        class Employee {
+         2            static final int ENGINEER = 0;
+         3            static final int MANAGER = 1;
+         4            static final int INTERN = 2;
+
+
+         5            private int type;
+
+
+         6            Employee(int type) {
+         7                this.type = type;
+         8            }
+
+
+         9            double calculateSalary() {
+        10                switch (type) {
+        11                    case ENGINEER:
+        12                        return 5000;
+        13                    case MANAGER:
+        14                        return 7000;
+        15                    case INTERN:
+        16                        return 2000;
+        17                    default:
+        18                        throw new IllegalArgumentException("Invalid employee type");
+        19                }
+        20            }
+        21        }
+
+
+
+
+Чому цей метод рефакторингу підходить у цій ситуації? Код типу призводить до негнучкого дизайну та робить додавання нових ролей важким та здатним викликати помилки. Використання шаблону стратегії видаляє код типу та делегує розрахунок зарплати спеціальним класам. Таким чином, гнучкість коду та його здатність динамічно змінювати поведінку значно збільшується. Код після рефакторингу:
+         1        interface SalaryStrategy {
+         2            double calculateSalary();
+         3        }
+
+
+         4        class EngineerSalary implements SalaryStrategy {
+         5            public double calculateSalary() {
+         6                return 5000;
+         7            }
+         8        }
+
+
+         9        class ManagerSalary implements SalaryStrategy {
+        10            public double calculateSalary() {
+        11                return 7000;
+        12            }
+        13        }
+
+
+        14        class InternSalary implements SalaryStrategy {
+        15            public double calculateSalary() {
+        16                return 2000;
+        17            }
+        18        }
+
+
+        19        class Employee {
+        20            private SalaryStrategy salaryStrategy;
+
+
+        21            Employee(SalaryStrategy salaryStrategy) {
+        22                this.salaryStrategy = salaryStrategy;
+        23            }
+
+
+        24            double calculateSalary() {
+        25                return salaryStrategy.calculateSalary();
+        26            }
+        27        }
+
+        Як можна побачити, новий дизайн усуває код типу та пов’язану з ним умовну логіку. Завдяки відокремленню логіки розрахунку зарплати від класу Employee система стає більш зручною в обслуговуванні та краще дотримується принципу відкритості/закритості. Для додавання нової ролі тепер потрібно лише створити нову реалізацію інтерфейсу SalaryStrategy без зміни існуючого коду. Цей підхід також покращує можливість тестування, оскільки кожен розрахунок зарплати можна перевірити незалежно.
+
+
+Висновок
+Вибір між методами рефакторингу залежить від конкретних вимог і обмежень проекту. Успадкування є гарним вибором, коли відносини класів є стабільними та прямолінійними. Делегування ж забезпечує гнучкість, необхідну для динамічних систем, але вимагає обережного поводження, щоб уникнути зайвої складності. Заміна кодів типів шаблонами стану або стратегії покращує модульність і придатність до обслуговування шляхом ізоляції варіацій у поведінці. Розуміючи переваги та недоліки кожного з методів рефакторингу, можна розумно узгодити дизайн із цілями проекту та забезпечити зручність обслуговування коду з часом.
+Посилання на відео: https://youtu.be/4wuyhfLte90.
