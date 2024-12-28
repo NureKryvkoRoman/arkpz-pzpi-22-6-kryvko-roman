@@ -1,5 +1,6 @@
 package ua.nure.kryvko.roman.Atark.user;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,20 +12,20 @@ import java.util.Optional;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("")
     List<User> findAll() {
-        return userRepository.findAll();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
     User findById(@PathVariable Integer id) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userService.getUserById(id);
         if(user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -33,23 +34,20 @@ public class UserController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    void create(@RequestBody User user) {
-        userRepository.create(user);
+    void create(@Valid @RequestBody User user) {
+        userService.saveUser(user);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void update(@RequestBody User user, @PathVariable Integer id) {
-        if(!userRepository.update(user, id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    void update(@Valid @RequestBody User user, @PathVariable Integer id) {
+        userService.updateUser(user, id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable Integer id) {
-        if(!userRepository.delete(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        userService.deleteUser(id);
     }
+
 }
