@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import ua.nure.kryvko.roman.Atark.subscription.Subscription;
 import ua.nure.kryvko.roman.Atark.userinfo.UserInfo;
 
 @Entity
@@ -31,6 +32,9 @@ public class User {
 
         @OneToOne(mappedBy = "user")
         UserInfo userInfo;
+
+        @OneToOne(mappedBy = "user")
+        Subscription subscription;
 
         public User() {}
 
