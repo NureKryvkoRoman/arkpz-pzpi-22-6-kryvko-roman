@@ -8,6 +8,8 @@ import ua.nure.kryvko.roman.Atark.greenhouse.Greenhouse;
 import ua.nure.kryvko.roman.Atark.sensorState.SensorState;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @DynamicUpdate
@@ -19,7 +21,7 @@ public class Sensor {
     Integer id;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "greenhouse_id", referencedColumnName = "id")
     Greenhouse greenhouse;
 
@@ -33,8 +35,8 @@ public class Sensor {
 
     String name;
 
-    @OneToMany(mappedBy = "sensor_state")
-    SensorState sensorState;
+    @OneToMany(mappedBy = "sensor")
+    List<SensorState> sensorStates = new ArrayList<>();
 
     public Sensor(Greenhouse greenhouse, boolean isActive, LocalDateTime installedAt, SensorType sensorType, String name) {
         this.greenhouse = greenhouse;

@@ -5,9 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
+import ua.nure.kryvko.roman.Atark.notification.Notification;
+import ua.nure.kryvko.roman.Atark.sensor.Sensor;
 import ua.nure.kryvko.roman.Atark.user.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @DynamicUpdate
@@ -19,8 +23,8 @@ public class Greenhouse {
     Integer id;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     User user;
 
     @CreatedDate
@@ -34,6 +38,12 @@ public class Greenhouse {
 
     @NotNull
     Float longitude;
+
+    @OneToMany(mappedBy = "greenhouse")
+    List<Sensor> sensors = new ArrayList<>();
+
+    @OneToMany(mappedBy = "greenhouse")
+    List<Notification> notifications = new ArrayList<>();
 
     public Greenhouse(User user, LocalDateTime createdAt, String name, Float latitude, Float longitude) {
         this.user = user;

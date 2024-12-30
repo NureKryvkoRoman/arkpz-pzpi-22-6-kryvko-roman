@@ -6,8 +6,11 @@ import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import ua.nure.kryvko.roman.Atark.greenhouse.Greenhouse;
+import ua.nure.kryvko.roman.Atark.notification.Notification;
 import ua.nure.kryvko.roman.Atark.subscription.Subscription;
 import ua.nure.kryvko.roman.Atark.userinfo.UserInfo;
+
+import java.util.List;
 
 @Entity
 @DynamicUpdate
@@ -35,10 +38,13 @@ public class User {
         UserInfo userInfo;
 
         @OneToMany(mappedBy = "user")
-        Subscription subscription;
+        List<Subscription> subscriptions;
 
-        @OneToMany(mappedBy = "greenhouse")
-        Greenhouse greenhouse;
+        @OneToMany(mappedBy = "user")
+        List<Greenhouse> greenhouses;
+
+        @OneToMany(mappedBy = "user")
+        List<Notification> notifications;
 
         public User() {}
 
