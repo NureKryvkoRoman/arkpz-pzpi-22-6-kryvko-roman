@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import ua.nure.kryvko.roman.Atark.greenhouse.Greenhouse;
 import ua.nure.kryvko.roman.Atark.subscription.Subscription;
 import ua.nure.kryvko.roman.Atark.userinfo.UserInfo;
 
@@ -33,8 +34,11 @@ public class User {
         @OneToOne(mappedBy = "user")
         UserInfo userInfo;
 
-        @OneToOne(mappedBy = "user")
+        @OneToMany(mappedBy = "user")
         Subscription subscription;
+
+        @OneToMany(mappedBy = "greenhouse")
+        Greenhouse greenhouse;
 
         public User() {}
 

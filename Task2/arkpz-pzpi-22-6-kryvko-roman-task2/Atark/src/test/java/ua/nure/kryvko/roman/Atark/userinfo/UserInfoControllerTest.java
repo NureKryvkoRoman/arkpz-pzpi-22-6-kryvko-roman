@@ -140,7 +140,7 @@ class UserInfoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                        {
-                           "user": { "id" },
+                           "user": { "id":1 },
                            "firstName": "Updated Name"
                        }
                        """))
