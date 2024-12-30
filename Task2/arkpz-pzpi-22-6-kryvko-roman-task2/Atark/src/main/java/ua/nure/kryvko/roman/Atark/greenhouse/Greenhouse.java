@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
+import ua.nure.kryvko.roman.Atark.automationRule.AutomationRule;
+import ua.nure.kryvko.roman.Atark.controller.Controller;
 import ua.nure.kryvko.roman.Atark.notification.Notification;
 import ua.nure.kryvko.roman.Atark.sensor.Sensor;
 import ua.nure.kryvko.roman.Atark.user.User;
@@ -44,6 +46,14 @@ public class Greenhouse {
 
     @OneToMany(mappedBy = "greenhouse")
     List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "greenhouse")
+    List<Controller> controllers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "greenhouse")
+    List<AutomationRule> automationRules = new ArrayList<>();
+
+    public Greenhouse() {}
 
     public Greenhouse(User user, LocalDateTime createdAt, String name, Float latitude, Float longitude) {
         this.user = user;
