@@ -38,7 +38,7 @@ public class UserController {
         userService.saveUser(user);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void update(@Valid @RequestBody User user, @PathVariable Integer id) {
         userService.updateUser(user, id);

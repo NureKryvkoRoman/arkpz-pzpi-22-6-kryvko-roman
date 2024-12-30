@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import ua.nure.kryvko.roman.Atark.userinfo.UserInfo;
 
 @Entity
 @DynamicUpdate
@@ -14,15 +15,22 @@ public class User {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         Integer id;
+
         @NotEmpty
         String login;
+
         @Email
         @NotEmpty
         String email;
+
         @NotEmpty
         String password;
+
         @Enumerated(EnumType.STRING)
         UserRole role;
+
+        @OneToOne(mappedBy = "user")
+        UserInfo userInfo;
 
         public User() {}
 
