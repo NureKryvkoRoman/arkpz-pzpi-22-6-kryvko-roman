@@ -1,5 +1,6 @@
 package ua.nure.kryvko.roman.Atark.registration;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ua.nure.kryvko.roman.Atark.user.User;
@@ -11,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.kryvko.roman.Atark.user.UserRole;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,34 +29,69 @@ public class AuthController {
     PasswordEncoder encoder;
 
     @Autowired
-    JwtUtil jwtUtils;
+    JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public String authenticateUser(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        user.getPassword()
-                )
-        );
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return jwtUtils.generateToken(userDetails.getUsername());
+    public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
+            String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", accessToken);
+            tokens.put("refreshToken", refreshToken);
+
+            return new ResponseEntity<>(tokens, HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(
+                    Map.of("error", "Invalid email or password"),
+                    HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    Map.of("error", "An unexpected error occurred"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    //TODO: add username (login) existence checks
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody LoginRequest loginRequest) {
-        if (userRepository.existsByEmail(loginRequest.getEmail())) {
+    public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequest signUpRequest) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return new ResponseEntity<>("Error: email is already taken!", HttpStatus.CONFLICT);
+        } else if (userRepository.existsByLogin(signUpRequest.getLogin())) {
+            return new ResponseEntity<>("Error: username is already taken!", HttpStatus.CONFLICT);
         }
-        // Create new user's account
+
         User newUser = new User(
-                "placeholder", //TODO: change
-                loginRequest.getEmail(),
-                encoder.encode(loginRequest.getPassword()),
+                signUpRequest.getLogin(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()),
                 UserRole.USER
         );
         userRepository.save(newUser);
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refreshAccessToken(@RequestBody @Valid RefreshTokenRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (jwtUtil.validateJwtToken(refreshToken) && "refresh".equals(jwtUtil.getTokenType(refreshToken))) {
+            String username = jwtUtil.getUsernameFromToken(refreshToken);
+            String newAccessToken = jwtUtil.generateAccessToken(username);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("accessToken", newAccessToken);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Map.of("error", "Invalid refresh token"), HttpStatus.FORBIDDEN);
+        }
     }
 }
