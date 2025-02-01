@@ -94,4 +94,7 @@ public class User {
         public void setRole(UserRole role) {
                 this.role = role;
         }
+        public boolean hasRole(UserRole role) {
+                return this.role == role;
+        }
 }
