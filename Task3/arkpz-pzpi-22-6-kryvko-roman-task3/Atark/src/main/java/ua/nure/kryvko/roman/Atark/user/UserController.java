@@ -2,6 +2,7 @@ package ua.nure.kryvko.roman.Atark.user;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,33 +28,53 @@ public class UserController {
     //TODO: add methods to find users by email / login
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @GetMapping("/{id}")
-    User findById(@PathVariable Integer id) {
+    ResponseEntity<User> findById(@PathVariable Integer id) {
         Optional<User> user = userService.getUserById(id);
         if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return user.get();
+
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    void create(@Valid @RequestBody User user) {
-        userService.saveUser(user);
+    ResponseEntity<Void> create(@Valid @RequestBody User user) {
+        try {
+            userService.saveUser(user);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
-    void update(@Valid @RequestBody User user, @PathVariable Integer id) {
-        userService.updateUser(user, id);
+    ResponseEntity<Void> update(@Valid @RequestBody User user, @PathVariable Integer id) {
+        try {
+            userService.updateUser(user, id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
-    void delete(@PathVariable Integer id) {
-        userService.deleteUser(id);
+    ResponseEntity<Void> delete(@PathVariable Integer id) {
+        try {
+            userService.deleteUser(id);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

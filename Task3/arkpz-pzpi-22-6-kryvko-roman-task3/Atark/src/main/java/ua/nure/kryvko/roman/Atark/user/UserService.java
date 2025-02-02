@@ -3,6 +3,7 @@ package ua.nure.kryvko.roman.Atark.user;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,6 +28,9 @@ public class UserService {
     }
 
     public void saveUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail()) || userRepository.existsByLogin(user.getLogin())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
         userRepository.save(user);
     }
 
