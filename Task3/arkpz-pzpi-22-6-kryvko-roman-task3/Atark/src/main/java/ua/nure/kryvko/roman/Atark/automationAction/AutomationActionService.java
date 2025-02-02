@@ -1,7 +1,12 @@
 package ua.nure.kryvko.roman.Atark.automationAction;
 
+import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import ua.nure.kryvko.roman.Atark.automationRule.AutomationRule;
 import ua.nure.kryvko.roman.Atark.automationRule.AutomationRuleRepository;
+import ua.nure.kryvko.roman.Atark.controller.Controller;
 import ua.nure.kryvko.roman.Atark.controller.ControllerRepository;
 
 import java.util.List;
@@ -22,15 +27,16 @@ public class AutomationActionService {
         this.controllerRepository = controllerRepository;
     }
 
+    @Transactional
     public AutomationAction createAutomationAction(AutomationAction action) {
-        if (!automationRuleRepository.existsById(action.getAutomationRule().getId())) {
-            throw new IllegalArgumentException("Automation rule does not exist.");
-        }
+        AutomationRule ownerRule = automationRuleRepository.findById(action.getAutomationRule().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Automation rule does not exist."));
 
-        if (!controllerRepository.existsById(action.getController().getId())) {
-            throw new IllegalArgumentException("Controller does not exist.");
-        }
+        Controller ownerController = controllerRepository.findById(action.getController().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Controller does not exist."));
 
+        action.setAutomationRule(ownerRule);
+        action.setController(ownerController);
         return automationActionRepository.save(action);
     }
 
@@ -38,9 +44,29 @@ public class AutomationActionService {
         return automationActionRepository.findById(id);
     }
 
+    @Transactional
+    public AutomationAction updateAutomationAction(Integer id, AutomationAction updatedAction) {
+        updatedAction.setId(id);
+        if (!automationActionRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Automation action does not exist.");
+        }
+        AutomationRule ownerRule = automationRuleRepository.findById(updatedAction.getAutomationRule().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Automation rule does not exist."));
+
+        Controller ownerController = controllerRepository.findById(updatedAction.getController().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Controller does not exist."));
+
+        updatedAction.setAutomationRule(ownerRule);
+        updatedAction.setController(ownerController);
+        automationActionRepository.save(updatedAction);
+
+        return updatedAction;
+    }
+
+    @Transactional
     public void deleteAutomationAction(Integer id) {
         if (!automationActionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Automation action does not exist.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Automation action does not exist.");
         }
         automationActionRepository.deleteById(id);
     }

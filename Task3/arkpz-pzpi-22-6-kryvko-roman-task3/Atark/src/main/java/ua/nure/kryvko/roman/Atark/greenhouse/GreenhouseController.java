@@ -19,6 +19,7 @@ public class GreenhouseController {
         this.greenhouseService = greenhouseService;
     }
 
+    //TODO: create endpoints to activate / deactivate subscriptions
     @PostMapping("")
     public ResponseEntity<Greenhouse> createGreenhouse(@RequestBody Greenhouse greenhouse) {
         Greenhouse savedGreenhouse;
@@ -31,7 +32,7 @@ public class GreenhouseController {
             ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok(savedGreenhouse);
+        return new ResponseEntity(savedGreenhouse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

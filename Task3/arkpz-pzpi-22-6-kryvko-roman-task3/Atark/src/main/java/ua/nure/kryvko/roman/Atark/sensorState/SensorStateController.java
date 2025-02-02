@@ -1,9 +1,11 @@
 package ua.nure.kryvko.roman.Atark.sensorState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -20,8 +22,14 @@ public class SensorStateController {
 
     @PostMapping
     public ResponseEntity<SensorState> createSensorState(@RequestBody SensorState sensorState) {
-        SensorState savedSensorState = sensorStateService.saveSensorState(sensorState);
-        return ResponseEntity.ok(savedSensorState);
+        try {
+            SensorState savedSensorState = sensorStateService.saveSensorState(sensorState);
+            return new ResponseEntity<>(savedSensorState, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
@@ -34,15 +42,31 @@ public class SensorStateController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<SensorState> updateSensorState(@PathVariable Integer id, @RequestBody SensorState sensorState) {
-        sensorState.setId(id);
-        SensorState updatedSensorState = sensorStateService.updateSensorState(sensorState);
-        return ResponseEntity.ok(updatedSensorState);
+        try {
+            sensorState.setId(id);
+            SensorState updatedSensorState = sensorStateService.updateSensorState(sensorState);
+            return ResponseEntity.ok(updatedSensorState);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Void> deleteSensorState(@PathVariable Integer id) {
-        sensorStateService.deleteSensorStateById(id);
-        return ResponseEntity.noContent().build();
+        try {
+            sensorStateService.deleteSensorStateById(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

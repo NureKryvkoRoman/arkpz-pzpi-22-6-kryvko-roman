@@ -53,18 +53,15 @@ public class UserInfoController {
     @ResponseStatus(HttpStatus.CREATED)
     ResponseEntity<Map<String, String>> create(@Valid @RequestBody UserInfo userInfo) {
         try {
-            if (userInfoService.existsByUser(userInfo.getUser())) {
-                return new ResponseEntity<>(Map.of("error", "User info already exists!"), HttpStatus.CONFLICT);
-            }
             userInfoService.createUserInfo(userInfo);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(Map.of("error", "Error in input data"), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(Map.of("error", "Unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
@@ -72,16 +69,14 @@ public class UserInfoController {
     ResponseEntity<Void> update(@Valid @RequestBody UserInfo userInfo, @PathVariable Integer id) {
         try {
             userInfoService.updateUserInfo(userInfo, id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/{id}")
@@ -89,15 +84,13 @@ public class UserInfoController {
     ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             userInfoService.deleteUserInfo(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

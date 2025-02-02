@@ -2,11 +2,14 @@ package ua.nure.kryvko.roman.Atark.userinfo;
 
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 import ua.nure.kryvko.roman.Atark.user.User;
 import ua.nure.kryvko.roman.Atark.user.UserRepository;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -41,6 +44,9 @@ public class UserInfoService {
 
     @Transactional
     public void createUserInfo(UserInfo userInfo) {
+        if (existsByUser(userInfo.getUser())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User info already exists!");
+        }
         Integer userId = userInfo.getUser().getId();
         User managedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));

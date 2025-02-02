@@ -1,7 +1,11 @@
 package ua.nure.kryvko.roman.Atark.automationRule;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import ua.nure.kryvko.roman.Atark.greenhouse.Greenhouse;
 import ua.nure.kryvko.roman.Atark.greenhouse.GreenhouseRepository;
 
 import java.util.List;
@@ -19,10 +23,11 @@ public class AutomationRuleService {
         this.greenhouseRepository = greenhouseRepository;
     }
 
+    @Transactional
     public AutomationRule createAutomationRule(AutomationRule automationRule) {
-        if (!greenhouseRepository.existsById(automationRule.getGreenhouse().getId())) {
-            throw new IllegalArgumentException("Greenhouse does not exist.");
-        }
+        Greenhouse owner = greenhouseRepository.findById(automationRule.getGreenhouse().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Greenhouse does not exist."));
+        automationRule.setGreenhouse(owner);
         return automationRuleRepository.save(automationRule);
     }
 
@@ -34,22 +39,24 @@ public class AutomationRuleService {
         return automationRuleRepository.findById(id);
     }
 
+    @Transactional
     public AutomationRule updateAutomationRule(Integer id, AutomationRule updatedAutomationRule) {
-        if (!automationRuleRepository.existsById(id)) {
-            throw new IllegalArgumentException("Automation Rule does not exist.");
-        }
-
-        if (!greenhouseRepository.existsById(updatedAutomationRule.getGreenhouse().getId())) {
-            throw new IllegalArgumentException("Greenhouse does not exist.");
-        }
-
         updatedAutomationRule.setId(id);
+        if (!automationRuleRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Automation Rule does not exist.");
+        }
+
+        Greenhouse owner = greenhouseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Greenhouse does not exist."));
+        updatedAutomationRule.setGreenhouse(owner);
+
         return automationRuleRepository.save(updatedAutomationRule);
     }
 
+    @Transactional
     public void deleteAutomationRule(Integer id) {
         if (!automationRuleRepository.existsById(id)) {
-            throw new IllegalArgumentException("Automation Rule does not exist.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Automation Rule does not exist.");
         }
         automationRuleRepository.deleteById(id);
     }

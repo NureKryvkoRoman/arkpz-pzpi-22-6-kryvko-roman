@@ -2,19 +2,29 @@ package ua.nure.kryvko.roman.Atark.subscription;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import ua.nure.kryvko.roman.Atark.user.User;
+import ua.nure.kryvko.roman.Atark.user.UserRepository;
+
 import java.util.Optional;
 
 @Service
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public SubscriptionService(SubscriptionRepository subscriptionRepository) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, UserRepository userRepository) {
         this.subscriptionRepository = subscriptionRepository;
+        this.userRepository = userRepository;
     }
 
     public Subscription saveSubscription(Subscription subscription) {
+        User owner = userRepository.findById(subscription.getUser().getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Ensure the user is a managed entity
+        subscription.setUser(owner);
         return subscriptionRepository.save(subscription);
     }
 
