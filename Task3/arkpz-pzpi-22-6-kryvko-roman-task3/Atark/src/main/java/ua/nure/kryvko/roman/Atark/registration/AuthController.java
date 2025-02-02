@@ -58,21 +58,7 @@ public class AuthController {
             }
 
             User user = optionalUser.get();
-
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            user.getEmail(), // Always use email for authentication
-                            loginRequest.getPassword()
-                    )
-            );
-
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
-            String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
-
-            Map<String, String> tokens = new HashMap<>();
-            tokens.put("accessToken", accessToken);
-            tokens.put("refreshToken", refreshToken);
+            Map<String, String> tokens = generateTokens(loginRequest.getPassword(), user);
 
             return ResponseEntity.ok(tokens);
         } catch (BadCredentialsException e) {
@@ -86,12 +72,31 @@ public class AuthController {
         }
     }
 
+    private Map<String, String> generateTokens(String password, User user) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        user.getEmail(), // Always use email for authentication
+                        password
+                )
+        );
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
+    }
+
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequest signUpRequest) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody @Valid SignUpRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<>("Error: email is already taken!", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(Map.of("error:","User with this email already exists."), HttpStatus.CONFLICT);
         } else if (userRepository.existsByLogin(signUpRequest.getLogin())) {
-            return new ResponseEntity<>("Error: username is already taken!", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(Map.of("error:", "Username is already taken."), HttpStatus.CONFLICT);
         }
 
         User newUser = new User(
@@ -100,8 +105,11 @@ public class AuthController {
                 encoder.encode(signUpRequest.getPassword()),
                 UserRole.USER
         );
+
         userRepository.save(newUser);
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+        Map<String, String> signUpResponse = generateTokens(signUpRequest.getPassword(), newUser);
+        signUpResponse.put("message","User registered successfully");
+        return new ResponseEntity<>(signUpResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/refresh")

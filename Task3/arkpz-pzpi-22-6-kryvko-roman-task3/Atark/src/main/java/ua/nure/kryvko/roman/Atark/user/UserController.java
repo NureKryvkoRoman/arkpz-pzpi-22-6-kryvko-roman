@@ -24,6 +24,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    //TODO: add methods to find users by email / login
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @GetMapping("/{id}")
     User findById(@PathVariable Integer id) {
@@ -36,18 +37,21 @@ public class UserController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     void create(@Valid @RequestBody User user) {
         userService.saveUser(user);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     void update(@Valid @RequestBody User user, @PathVariable Integer id) {
         userService.updateUser(user, id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     void delete(@PathVariable Integer id) {
         userService.deleteUser(id);
     }

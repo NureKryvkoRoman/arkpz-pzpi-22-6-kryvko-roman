@@ -2,6 +2,7 @@ package ua.nure.kryvko.roman.Atark.automationAction;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class AutomationActionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationAction> createAutomationAction(@RequestBody AutomationAction action) {
         try {
             AutomationAction createdAction = automationActionService.createAutomationAction(action);
@@ -27,6 +29,7 @@ public class AutomationActionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationAction> getAutomationActionById(@PathVariable Integer id) {
         return automationActionService.getAutomationActionById(id)
                 .map(ResponseEntity::ok)
@@ -34,6 +37,7 @@ public class AutomationActionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Void> deleteAutomationAction(@PathVariable Integer id) {
         try {
             automationActionService.deleteAutomationAction(id);
@@ -44,6 +48,7 @@ public class AutomationActionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<List<AutomationAction>> getAllAutomationActions() {
         return ResponseEntity.ok(automationActionService.getAllAutomationActions());
     }

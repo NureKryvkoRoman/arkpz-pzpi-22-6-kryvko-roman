@@ -3,6 +3,7 @@ package ua.nure.kryvko.roman.Atark.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class ControllerController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Controller> getControllerById(@PathVariable Integer id) {
         return controllerService.getControllerById(id)
                 .map(controller -> new ResponseEntity<>(controller, HttpStatus.OK))
@@ -36,11 +38,13 @@ public class ControllerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public List<Controller> getAllControllers() {
         return controllerService.getAllControllers();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Void> deleteController(@PathVariable Integer id) {
         controllerService.deleteController(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

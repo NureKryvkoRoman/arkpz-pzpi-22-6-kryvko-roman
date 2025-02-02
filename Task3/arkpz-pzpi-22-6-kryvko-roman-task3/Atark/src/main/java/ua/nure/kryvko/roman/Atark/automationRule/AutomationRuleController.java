@@ -1,5 +1,6 @@
 package ua.nure.kryvko.roman.Atark.automationRule;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class AutomationRuleController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationRule> createAutomationRule(@RequestBody AutomationRule automationRule) {
         try {
             AutomationRule createdRule = automationRuleService.createAutomationRule(automationRule);
@@ -31,11 +33,13 @@ public class AutomationRuleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<List<AutomationRule>> getAllAutomationRules() {
         return ResponseEntity.ok(automationRuleService.getAllAutomationRules());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationRule> getAutomationRuleById(@PathVariable Integer id) {
         return automationRuleService.getAutomationRuleById(id)
                 .map(ResponseEntity::ok)
@@ -43,6 +47,7 @@ public class AutomationRuleController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationRule> updateAutomationRule(@PathVariable Integer id, @RequestBody AutomationRule automationRule) {
         try {
             AutomationRule updatedRule = automationRuleService.updateAutomationRule(id, automationRule);
@@ -53,6 +58,7 @@ public class AutomationRuleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Void> deleteAutomationRule(@PathVariable Integer id) {
         try {
             automationRuleService.deleteAutomationRule(id);

@@ -2,6 +2,7 @@ package ua.nure.kryvko.roman.Atark.notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -18,6 +19,7 @@ public class NotificationController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Notification> createNotification(@RequestBody Notification notification) {
         try {
             Notification savedNotification = notificationService.createNotification(notification);
@@ -28,12 +30,14 @@ public class NotificationController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Notification> getNotificationById(@PathVariable Integer id) {
         Optional<Notification> notification = notificationService.getNotificationById(id);
         return notification.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Notification> updateNotification(@PathVariable Integer id, @RequestBody Notification notification) {
         notification.setId(id);
         try {
@@ -45,6 +49,7 @@ public class NotificationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Void> deleteNotification(@PathVariable Integer id) {
         try {
             notificationService.deleteNotificationById(id);
