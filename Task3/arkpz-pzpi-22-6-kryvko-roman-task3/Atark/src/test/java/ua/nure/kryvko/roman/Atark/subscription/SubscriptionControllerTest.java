@@ -72,7 +72,7 @@ public class SubscriptionControllerTest {
     void updateSubscription_shouldReturnUpdatedSubscription() throws Exception {
         Subscription subscription = new Subscription(new User(), LocalDateTime.now(), LocalDateTime.now().plusDays(30), SubscriptionStatus.ACTIVE);
         subscription.setId(1);
-        Mockito.when(subscriptionService.updateSubscription(any(Subscription.class))).thenReturn(subscription);
+        Mockito.when(subscriptionService.updateSubscription(1, any(Subscription.class))).thenReturn(subscription);
 
         mockMvc.perform(put("/api/subscriptions/1")
                         .contentType(MediaType.APPLICATION_JSON)

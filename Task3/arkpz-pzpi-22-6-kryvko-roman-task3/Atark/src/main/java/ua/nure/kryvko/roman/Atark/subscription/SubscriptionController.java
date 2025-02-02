@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -21,15 +22,16 @@ public class SubscriptionController {
 
     @PostMapping
     public ResponseEntity<Subscription> createSubscription(@RequestBody Subscription subscription) {
-        Subscription savedSubscription;
         try {
-            savedSubscription = subscriptionService.saveSubscription(subscription);
+            Subscription savedSubscription = subscriptionService.saveSubscription(subscription);
+            return new ResponseEntity<>(savedSubscription, HttpStatus.CREATED);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(savedSubscription, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -39,13 +41,14 @@ public class SubscriptionController {
         return subscription.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Subscription> updateSubscription(@PathVariable Integer id, @RequestBody Subscription subscription) {
         try {
-            subscription.setId(id);
-            Subscription updatedSubscription = subscriptionService.updateSubscription(subscription);
+            Subscription updatedSubscription = subscriptionService.updateSubscription(id, subscription);
             return ResponseEntity.ok(updatedSubscription);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -59,6 +62,8 @@ public class SubscriptionController {
         try {
             subscriptionService.deleteSubscriptionById(id);
             return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {

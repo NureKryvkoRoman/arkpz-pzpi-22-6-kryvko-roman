@@ -75,8 +75,7 @@ public class GreenhouseControllerTest {
     @Test
     void updateGreenhouse_shouldReturnUpdatedGreenhouse() throws Exception {
         Greenhouse greenhouse = new Greenhouse(new User(), LocalDateTime.now(), "Greenhouse B", 53.0f, 14.0f);
-        greenhouse.setId(1);
-        Mockito.when(greenhouseService.updateGreenhouse(any(Greenhouse.class))).thenReturn(greenhouse);
+        Mockito.when(greenhouseService.updateGreenhouse(1, any(Greenhouse.class))).thenReturn(greenhouse);
 
         mockMvc.perform(put("/api/greenhouses/1")
                         .contentType(MediaType.APPLICATION_JSON)

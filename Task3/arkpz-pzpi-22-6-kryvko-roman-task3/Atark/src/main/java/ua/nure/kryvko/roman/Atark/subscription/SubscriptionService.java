@@ -1,7 +1,10 @@
 package ua.nure.kryvko.roman.Atark.subscription;
 
+import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.server.ResponseStatusException;
 import ua.nure.kryvko.roman.Atark.user.User;
 import ua.nure.kryvko.roman.Atark.user.UserRepository;
 
@@ -19,11 +22,11 @@ public class SubscriptionService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Subscription saveSubscription(Subscription subscription) {
         User owner = userRepository.findById(subscription.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Ensure the user is a managed entity
         subscription.setUser(owner);
         return subscriptionRepository.save(subscription);
     }
@@ -32,14 +35,24 @@ public class SubscriptionService {
         return subscriptionRepository.findById(id);
     }
 
+    @Transactional
     public void deleteSubscriptionById(Integer id) {
+        if (!subscriptionRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subscription not found for deletion");
+        }
         subscriptionRepository.deleteById(id);
     }
 
-    public Subscription updateSubscription(Subscription subscription) {
-        if (subscription.getId() == null || !subscriptionRepository.existsById(subscription.getId())) {
-            throw new IllegalArgumentException("Subscription ID not found for update.");
+    @Transactional
+    public Subscription updateSubscription(Integer id, Subscription subscription) {
+        subscription.setId(id);
+        if (!subscriptionRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subscription not found for deletion");
         }
+        User owner = userRepository.findById(subscription.getUser().getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        subscription.setUser(owner);
         return subscriptionRepository.save(subscription);
     }
 }

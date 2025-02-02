@@ -41,7 +41,7 @@ public class NotificationController {
         return notification.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Notification> updateNotification(@PathVariable Integer id, @RequestBody Notification notification) {
         try {
