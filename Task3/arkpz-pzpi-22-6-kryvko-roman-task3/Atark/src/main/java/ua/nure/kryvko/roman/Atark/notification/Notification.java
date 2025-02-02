@@ -42,6 +42,8 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     NotificationUrgency notificationUrgency;
 
+    public Notification() {}
+
     public Notification(User user, @Nullable Greenhouse greenhouse, String message, boolean isRead, Date timestamp, NotificationUrgency notificationUrgency) {
         this.user = user;
         this.greenhouse = greenhouse;

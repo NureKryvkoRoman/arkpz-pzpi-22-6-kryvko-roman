@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,7 +21,6 @@ public class GreenhouseController {
         this.greenhouseService = greenhouseService;
     }
 
-    //TODO: create endpoints to activate / deactivate subscriptions
     @PostMapping("")
     public ResponseEntity<Greenhouse> createGreenhouse(@RequestBody Greenhouse greenhouse) {
         try {
@@ -30,6 +30,32 @@ public class GreenhouseController {
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.id")
+    public ResponseEntity<List<Greenhouse>> getGreenhousesByUserId(@PathVariable Integer userId) {
+        try {
+            List<Greenhouse> greenhouses = greenhouseService.getGreenhousesByUserId(userId);
+            return ResponseEntity.ok(greenhouses);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
+    public ResponseEntity<List<Greenhouse>> getGreenhousesByUserEmail(@RequestParam String email) {
+        try {
+            List<Greenhouse> greenhouses = greenhouseService.getGreenhousesByUserEmail(email);
+            return ResponseEntity.ok(greenhouses);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

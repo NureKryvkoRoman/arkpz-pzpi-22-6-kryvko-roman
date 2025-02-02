@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ua.nure.kryvko.roman.Atark.user.User;
 import ua.nure.kryvko.roman.Atark.user.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,5 +57,19 @@ public class GreenhouseService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Greenhouse ID not found for deletion.");
         }
         greenhouseRepository.deleteById(id);
+    }
+
+    public List<Greenhouse> getGreenhousesByUserId(Integer userId) {
+        User user = userRepository.findById(userId)
+                        .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        return greenhouseRepository.findByUser(user);
+    }
+
+    public List<Greenhouse> getGreenhousesByUserEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        return greenhouseRepository.findByUser(user);
     }
 }
