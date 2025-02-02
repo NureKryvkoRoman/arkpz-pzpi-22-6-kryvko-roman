@@ -19,7 +19,6 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Subscription> createSubscription(@RequestBody Subscription subscription) {
         Subscription savedSubscription = subscriptionService.saveSubscription(subscription);
         return ResponseEntity.ok(savedSubscription);

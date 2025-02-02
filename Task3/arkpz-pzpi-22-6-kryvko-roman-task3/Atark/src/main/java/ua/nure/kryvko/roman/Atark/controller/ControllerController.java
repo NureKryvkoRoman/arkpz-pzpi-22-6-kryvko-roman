@@ -30,7 +30,6 @@ public class ControllerController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Controller> getControllerById(@PathVariable Integer id) {
         return controllerService.getControllerById(id)
                 .map(controller -> new ResponseEntity<>(controller, HttpStatus.OK))

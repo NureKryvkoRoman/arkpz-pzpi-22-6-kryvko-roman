@@ -19,7 +19,6 @@ public class SensorStateController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<SensorState> createSensorState(@RequestBody SensorState sensorState) {
         SensorState savedSensorState = sensorStateService.saveSensorState(sensorState);
         return ResponseEntity.ok(savedSensorState);

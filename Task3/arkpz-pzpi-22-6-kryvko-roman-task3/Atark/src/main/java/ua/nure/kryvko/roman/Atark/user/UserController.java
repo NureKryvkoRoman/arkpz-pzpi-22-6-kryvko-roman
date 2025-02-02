@@ -37,7 +37,7 @@ public class UserController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN')")
     void create(@Valid @RequestBody User user) {
         userService.saveUser(user);
     }

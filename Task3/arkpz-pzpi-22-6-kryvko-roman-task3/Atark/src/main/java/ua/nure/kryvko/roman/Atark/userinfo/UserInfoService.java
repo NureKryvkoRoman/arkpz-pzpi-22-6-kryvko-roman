@@ -19,6 +19,10 @@ public class UserInfoService {
         this.userRepository = userRepository;
     }
 
+    public boolean existsByUser(User user) {
+        return userInfoRepository.existsByUser(user);
+    }
+
     public UserInfo getById(Integer id) {
         Optional<UserInfo> userInfoOptional = userInfoRepository.findById(id);
         if(userInfoOptional.isEmpty()) {

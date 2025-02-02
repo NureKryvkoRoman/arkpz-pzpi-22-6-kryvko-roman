@@ -19,7 +19,6 @@ public class NotificationController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Notification> createNotification(@RequestBody Notification notification) {
         try {
             Notification savedNotification = notificationService.createNotification(notification);

@@ -18,7 +18,6 @@ public class AutomationActionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationAction> createAutomationAction(@RequestBody AutomationAction action) {
         try {
             AutomationAction createdAction = automationActionService.createAutomationAction(action);

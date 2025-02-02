@@ -22,7 +22,6 @@ public class AutomationRuleDetailsController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<AutomationRuleDetails> createAutomationRuleDetails(@RequestBody AutomationRuleDetails automationRuleDetails) {
         AutomationRuleDetails created = automationRuleDetailsService.createAutomationRuleDetails(automationRuleDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
