@@ -1,0 +1,237 @@
+﻿Харківський університет радіоелектроніки
+Факультет комп'ютерних наук
+Кафедра програмної інженерії
+
+ЗВІТ
+до лабораторної роботи №2 з дисципліни
+"Аналіз та рефакторинг коду"
+(завдання )
+
+
+Виконав: ст. гр. ПЗПІ-22-6
+Кривко Роман Андрійович
+
+
+Перевірив
+ст. викладач кафедри ПІ
+Сокорчук Ігор Петрович
+
+
+Харків 2024
+
+2 РОЗРОБКА БАЗИ ДАНИХ ДЛЯ СЕРВЕРНОЇ ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ ТА ПРИКЛАДНОГО ПРОГРАМНОГО ІНТЕРФЕЙСУ (API)
+2.1 Мета роботи
+На лабораторній роботі №2 потрібно розробити базу даних для серверної частини програмної системи та прикладного програмного інтерфейсу.
+2.2 Опис інженерних рішень
+Система має клієнт-серверну архітектуру, де серверна частина реалізована за допомогою фреймворку Spring Boot (Java) для обробки запитів та керування даними. Для зберігання інформації використовується реляційна база даних PostgreSQL, а для безпечної аутентифікації користувачів застосовується JWT (JSON Web Token). Система інтегрується з IoT-контролерами та сенсорами, що забезпечують моніторинг стану теплиці та автоматизацію процесів керування кліматом.
+Основні модулі серверної частини
+1. Авторизація та автентифікація
+* Реєстрація та вхід користувачів (адміністраторів та користувачів -  власників теплиць).
+* Використання JWT для безпечної аутентифікації та авторизації.
+* Керування ролями та правами доступу до об'єктів теплиці.
+2. Модуль управління теплицями
+* Додавання, редагування та видалення теплиць.
+* Моніторинг стану кожної теплиці через отримані дані з сенсорів.
+
+
+3. Модуль сенсорів та збору даних
+Інтеграція з IoT-сенсорами (), що збирають інформацію про:
+* Температуру
+* Вологість
+* Освітленість
+* Збереження поточних та історичних даних у базі даних.
+* Передача даних на сервер для подальшого аналізу та автоматичного керування.
+4. Модуль автоматизації:
+* Користувачі можуть додавати правила автоматизації для теплиць.
+* Кожне правило складається з деталей (AutomationRuleDetails) і визначає, які автоматизовані дії (AutomationAction) виконувати у відповідь на зміну параметрів середовища.
+* Виконання автоматичних дій через IoT-контролери (Controller), тобто надсилання команд контроллерам.
+5. Модуль сповіщень:
+* Автоматичні повідомлення користувачам про критичні події, такі як висока температура або недостатній рівень вологи.
+* Управління статусом повідомлень (прочитане/непрочитане).
+
+
+6. Модуль підписок:
+* Додавання, припинення, управління статусом підписок користувачів.
+7. Модуль профілю користувача:
+* Управління інформацією про користувача, включаючи контактні дані та роль у системі.
+2.3 Специфікація API для взаємодії серверної частини з клієнтами
+Специфікація прикладного програмного інтерфейсу (API):
+POST        api/greenhouses                 Додавання нової теплиці
+GET         api/greenhouses/{id}            Отримання теплиці за ID
+PUT         api/greenhouses/{id}            Оновлення даних теплиці
+DELETE  api/greenhouses/{id}            Видалення теплиці
+
+
+GET         api/userinfo/{id}               Отримання інформації про користувача за ID
+GET         api/userinfo/user/{id}          Отримання інформації про користувача за ID користувача
+POST        api/userinfo                    Додавання інформації про користувача
+PATCH   api/userinfo/{id}               Оновлення інформації про користувача
+DELETE  api/userinfo/{id}               Видалення інформації про користувача
+
+
+POST        api/subscriptions               Додавання підписки
+GET         api/subscriptions/{id}          Отримання підписки за ID
+PUT         api/subscriptions/{id}          Оновлення підписки за ID
+DELETE  api/subscriptions/{id}          Видалення підписки за ID
+
+
+POST        automation-rules        Додавання нового правила автоматизації
+GET        automation-rules        Отримання всіх правил автоматизації
+GET        automation-rules/{id}        Отримання певного правила автоматизації
+PUT        automation-rules/{id}        Оновлення даних правила автоматизації
+DELETE        automation-rules/{id}        Видалення правила автоматизації
+POST        controllers        Додавання нового контролера
+GET        controllers        Отримання всіх контролерів
+GET        controllers/{id}        Отримання певного контролера
+DELETE        controllers/{id}        Видалення контролера
+GET        user        Отримання всіх користувачів
+GET        user/{id}        Отримання певного користувача
+POST        user        Додавання нового користувача
+PATCH        user/{id}        Оновлення даних користувача
+DELETE        user/{id}        Видалення користувача
+POST automation-rule-details Додавання нового правила автоматизації
+GET automation-rule-details Отримання всіх правил автоматизації
+GET automation-rule-details/{id} Отримання певного правила автоматизації
+PUT automation-rule-details/{id} Оновлення даних правила автоматизації
+DELETE automation-rule-details/{id} Видалення правила автоматизації
+
+POST auth/login Вхід у систему та  отримання JWT токена
+POST auth/signup Створення нового облікового запису користувача
+POST auth/refresh Оновлення JWT токена
+
+
+POST notifications Додавання нового повідомлення
+GET notifications/{id} Отримання певного повідомлення
+PUT notifications/{id} Оновлення даних повідомлення
+DELETE notifications/{id} Видалення повідомлення
+POST automation-actions Додавання правила автоматизації
+GET automation-actions/{id} Отримання певного правила автоматизації
+PUT automation-actions/{id} Оновлення даних правила автоматизації
+DELETE automation-actions/{id} Видалення правила автоматизації
+POST sensors Додавання нового сенсора
+GET sensors/{id} Отримання певного сенсора
+PUT sensors/{id} Оновлення даних сенсора
+DELETE sensors/{id} Видалення сенсора
+
+
+POST sensor-states Додавання нових даних сенсора
+GET sensor-states/{id} Отримання певних даних сенсора
+PUT sensor-states/{id} Оновлення інформації про дані сенсора
+DELETE sensor-states/{id} Видалення даних сенсора
+
+
+POST sensor-states Додавання нових даних сенсора
+GET sensor-states/{id} Отримання певних даних сенсора
+PUT sensor-states/{id} Оновлення інформації про дані сенсора
+DELETE sensor-states/{id} Видалення даних сенсора
+
+
+Скрипт, необхідний для створення бази даних системи:
+CREATE TABLE Users (
+        id SERIAL PRIMARY KEY,
+        login VARCHAR(50) NOT NULL UNIQUE,
+        email VARCHAR(100) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(10) CHECK (role IN ('admin', 'user')) NOT NULL
+);
+
+
+CREATE TABLE UserInfos (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE NOT NULL REFERENCES Users(id) ON DELETE CASCADE,
+        first_name VARCHAR(50) NOT NULL,
+        last_name VARCHAR(50) NOT NULL,
+        phone_number VARCHAR(15),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMP
+);
+
+
+CREATE TABLE Subscriptions (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES Users(id) ON DELETE CASCADE,
+        start_date DATE NOT NULL,
+        end_date DATE NOT NULL,
+        status VARCHAR(10) CHECK (status IN ('active', 'expired', 'cancelled')) NOT NULL
+);
+
+
+CREATE TABLE Greenhouses (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES Users(id) ON DELETE CASCADE,
+        name VARCHAR(100) NOT NULL,
+        latitude DECIMAL(9,6) NOT NULL,
+        longitude DECIMAL(9,6) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE Sensors (
+        id SERIAL PRIMARY KEY,
+        greenhouse_id INT NOT NULL REFERENCES Greenhouses(id) ON DELETE CASCADE,
+        type VARCHAR(20) CHECK (type IN ('temperature', 'humidity', 'light')) NOT NULL,
+        name VARCHAR(50) NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE,
+        installed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE ControllerDevices (
+        id SERIAL PRIMARY KEY,
+        greenhouse_id INT NOT NULL REFERENCES Greenhouses(id) ON DELETE CASCADE,
+        type VARCHAR(20) CHECK (type IN ('irrigation', 'lighting', 'ventilation')) NOT NULL,
+        name VARCHAR(50) NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE,
+        installed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE SensorStates (
+        id SERIAL PRIMARY KEY,
+        sensor_id INT NOT NULL REFERENCES Sensors(id) ON DELETE CASCADE,
+        timestamp TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+        value DECIMAL(10,2) NOT NULL,
+        unit VARCHAR(20) NOT NULL
+);
+
+
+CREATE TABLE AutomationRules (
+        id SERIAL PRIMARY KEY,
+        greenhouse_id INT NOT NULL REFERENCES Greenhouses(id) ON DELETE CASCADE,
+        name VARCHAR(100) NOT NULL,
+        type VARCHAR(10) CHECK (type IN ('sensor', 'time')) NOT NULL
+);
+
+
+CREATE TABLE AutomationRuleDetails (
+        id SERIAL PRIMARY KEY,
+        rule_id INT NOT NULL REFERENCES AutomationRules(id) ON DELETE CASCADE,
+        min_value DECIMAL(10,2),
+        max_value DECIMAL(10,2),
+        start_time TIME,
+        interval INTERVAL
+);
+
+
+CREATE TABLE AutomationActions (
+        id SERIAL PRIMARY KEY,
+        rule_id INT NOT NULL REFERENCES AutomationRules(id) ON DELETE CASCADE,
+        controller_id INT NOT NULL REFERENCES ControllerDevices(id) ON DELETE CASCADE,
+        name VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE Notifications (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES Users(id) ON DELETE CASCADE,
+        greenhouse_id INT REFERENCES Greenhouses(id) ON DELETE SET NULL,
+        message TEXT NOT NULL,
+        timestamp TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+        is_read BOOLEAN DEFAULT FALSE,
+        urgency VARCHAR(10) CHECK (urgency IN ('info', 'warning', 'critical')) NOT NULL
+);
+
+Висновок
+Під час виконання лабораторної роботи №2  було розроблено базу даних для серверної частини програмної системи та прикладний програмний інтерфейс.
+
+Посилання на відео:
