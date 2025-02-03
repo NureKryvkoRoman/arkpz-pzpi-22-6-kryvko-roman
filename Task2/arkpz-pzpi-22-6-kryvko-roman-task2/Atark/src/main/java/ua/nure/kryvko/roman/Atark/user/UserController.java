@@ -18,11 +18,20 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Get all Users
+     * @return
+     */
     @GetMapping("")
     List<User> findAll() {
         return userService.getAllUsers();
     }
 
+    /**
+     * Get a user by ID
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     User findById(@PathVariable Integer id) {
         Optional<User> user = userService.getUserById(id);
@@ -32,18 +41,31 @@ public class UserController {
         return user.get();
     }
 
+    /**
+     * Add a new user
+     * @param user
+     */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     void create(@Valid @RequestBody User user) {
         userService.saveUser(user);
     }
 
+    /**
+     * Edit info about a user
+     * @param user
+     * @param id
+     */
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void update(@Valid @RequestBody User user, @PathVariable Integer id) {
         userService.updateUser(user, id);
     }
 
+    /**
+     * Remove a user
+     * @param id
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable Integer id) {

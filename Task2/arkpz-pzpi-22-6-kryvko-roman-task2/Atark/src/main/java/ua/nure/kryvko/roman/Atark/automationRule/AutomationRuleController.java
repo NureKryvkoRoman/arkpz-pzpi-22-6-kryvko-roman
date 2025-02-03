@@ -20,6 +20,11 @@ public class AutomationRuleController {
         this.automationRuleService = automationRuleService;
     }
 
+    /**
+     * Add a new AutomationRule to the system.
+     * @param automationRule
+     * @return
+     */
     @PostMapping
     public ResponseEntity<AutomationRule> createAutomationRule(@RequestBody AutomationRule automationRule) {
         try {
@@ -30,11 +35,20 @@ public class AutomationRuleController {
         }
     }
 
+    /**
+     * Retrieve all AutomationRules
+     * @return
+     */
     @GetMapping
     public ResponseEntity<List<AutomationRule>> getAllAutomationRules() {
         return ResponseEntity.ok(automationRuleService.getAllAutomationRules());
     }
 
+    /**
+     * Retrieve an AutomationRule by ID.
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<AutomationRule> getAutomationRuleById(@PathVariable Integer id) {
         return automationRuleService.getAutomationRuleById(id)
@@ -42,6 +56,12 @@ public class AutomationRuleController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
+    /**
+     * Edit an AutomationRule data by ID.
+     * @param id
+     * @param automationRule
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<AutomationRule> updateAutomationRule(@PathVariable Integer id, @RequestBody AutomationRule automationRule) {
         try {
@@ -52,6 +72,11 @@ public class AutomationRuleController {
         }
     }
 
+    /**
+     * Delete an AutomationRule by ID.
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAutomationRule(@PathVariable Integer id) {
         try {

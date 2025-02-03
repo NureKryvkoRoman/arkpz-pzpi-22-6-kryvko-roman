@@ -17,18 +17,34 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
+    /**
+     * Add a new Subscription to the system
+     * @param subscription
+     * @return
+     */
     @PostMapping
     public ResponseEntity<Subscription> createSubscription(@RequestBody Subscription subscription) {
         Subscription savedSubscription = subscriptionService.saveSubscription(subscription);
         return ResponseEntity.ok(savedSubscription);
     }
 
+    /**
+     * Get a Subscription by ID
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Subscription> getSubscriptionById(@PathVariable Integer id) {
         Optional<Subscription> subscription = subscriptionService.getSubscriptionById(id);
         return subscription.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Edit Subscription by ID
+     * @param id
+     * @param subscription
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Subscription> updateSubscription(@PathVariable Integer id, @RequestBody Subscription subscription) {
         subscription.setId(id);
@@ -36,6 +52,11 @@ public class SubscriptionController {
         return ResponseEntity.ok(updatedSubscription);
     }
 
+    /**
+     * Remove Subscription from the system
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSubscription(@PathVariable Integer id) {
         subscriptionService.deleteSubscriptionById(id);

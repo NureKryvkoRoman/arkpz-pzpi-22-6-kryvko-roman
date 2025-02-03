@@ -18,6 +18,11 @@ public class ControllerController {
         this.controllerService = controllerService;
     }
 
+    /**
+     * Add a new Controller to the system
+     * @param controller
+     * @return
+     */
     @PostMapping
     public ResponseEntity<Controller> createController(@RequestBody Controller controller) {
         try {
@@ -28,6 +33,11 @@ public class ControllerController {
         }
     }
 
+    /**
+     * Get a Controller by ID
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Controller> getControllerById(@PathVariable Integer id) {
         return controllerService.getControllerById(id)
@@ -35,11 +45,20 @@ public class ControllerController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Get all Controllers
+     * @return
+     */
     @GetMapping
     public List<Controller> getAllControllers() {
         return controllerService.getAllControllers();
     }
 
+    /**
+     * Delete a Controller by ID
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteController(@PathVariable Integer id) {
         controllerService.deleteController(id);

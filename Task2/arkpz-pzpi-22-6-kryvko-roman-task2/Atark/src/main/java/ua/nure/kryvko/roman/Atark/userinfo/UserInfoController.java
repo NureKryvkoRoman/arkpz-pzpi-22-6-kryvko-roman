@@ -20,12 +20,22 @@ public class UserInfoController {
         this.userService = userService;
     }
 
+    /**
+     * Get UserInfo by ID
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     @ResponseBody
     UserInfo getById(@PathVariable Integer id) {
         return userInfoService.getById(id);
     }
 
+    /**
+     * Get UserInfo by User's ID
+     * @param id
+     * @return
+     */
     @GetMapping("/user/{id}")
     @ResponseBody
     UserInfo getByUserId(@PathVariable Integer id) {
@@ -37,18 +47,31 @@ public class UserInfoController {
         return userInfoService.getByUser(userOptional.get());
     }
 
+    /**
+     * Add new UserInfo to the system
+     * @param userInfo
+     */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     void create(@Valid @RequestBody UserInfo userInfo) {
         userInfoService.createUserInfo(userInfo);
     }
 
+    /**
+     * Edit UserInfo
+     * @param userInfo
+     * @param id
+     */
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void update(@Valid @RequestBody UserInfo userInfo, @PathVariable Integer id) {
         userInfoService.updateUserInfo(userInfo, id);
     }
 
+    /**
+     * Remove UserInfo from the system
+     * @param id
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable Integer id) {

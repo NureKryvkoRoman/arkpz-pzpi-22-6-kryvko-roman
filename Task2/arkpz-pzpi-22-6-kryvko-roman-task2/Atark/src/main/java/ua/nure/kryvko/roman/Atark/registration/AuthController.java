@@ -31,6 +31,11 @@ public class AuthController {
     @Autowired
     JwtUtil jwtUtil;
 
+    /**
+     * Log into the system
+     * @param loginRequest
+     * @return
+     */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
         try {
@@ -61,6 +66,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * Register a new user account
+     * @param signUpRequest
+     * @return
+     */
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
@@ -79,6 +89,11 @@ public class AuthController {
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
+    /**
+     * Refresh JWT access token
+     * @param request
+     * @return
+     */
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> refreshAccessToken(@RequestBody @Valid RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();

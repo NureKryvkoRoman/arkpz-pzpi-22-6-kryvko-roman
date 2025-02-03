@@ -16,6 +16,11 @@ public class AutomationActionController {
         this.automationActionService = automationActionService;
     }
 
+    /**
+     * Create a new AutomationAction for a greenhouse.
+     * @param action
+     * @return
+     */
     @PostMapping
     public ResponseEntity<AutomationAction> createAutomationAction(@RequestBody AutomationAction action) {
         try {
@@ -26,6 +31,11 @@ public class AutomationActionController {
         }
     }
 
+    /**
+     * Get AutomationAction by its ID.
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<AutomationAction> getAutomationActionById(@PathVariable Integer id) {
         return automationActionService.getAutomationActionById(id)
@@ -33,6 +43,11 @@ public class AutomationActionController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
+    /**
+     * Remove AutomationRule from the system by ID.
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAutomationAction(@PathVariable Integer id) {
         try {
@@ -43,6 +58,10 @@ public class AutomationActionController {
         }
     }
 
+    /**
+     * Retrieve all AutomationActions
+     * @return
+     */
     @GetMapping
     public ResponseEntity<List<AutomationAction>> getAllAutomationActions() {
         return ResponseEntity.ok(automationActionService.getAllAutomationActions());

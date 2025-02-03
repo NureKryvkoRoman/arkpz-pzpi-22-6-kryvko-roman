@@ -20,23 +20,43 @@ public class AutomationRuleDetailsController {
         this.automationRuleDetailsService = automationRuleDetailsService;
     }
 
+    /**
+     * Add new AutomationRuleDetails to the system.
+     * @param automationRuleDetails
+     * @return
+     */
     @PostMapping
     public ResponseEntity<AutomationRuleDetails> createAutomationRuleDetails(@RequestBody AutomationRuleDetails automationRuleDetails) {
         AutomationRuleDetails created = automationRuleDetailsService.createAutomationRuleDetails(automationRuleDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    /**
+     * Get all AutomationRuleDetails
+     * @return
+     */
     @GetMapping
     public List<AutomationRuleDetails> getAllAutomationRuleDetails() {
         return automationRuleDetailsService.getAllAutomationRuleDetails();
     }
 
+    /**
+     * Get an AutomationRuleDetails by ID.
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<AutomationRuleDetails> getAutomationRuleDetailsById(@PathVariable Integer id) {
         AutomationRuleDetails found = automationRuleDetailsService.getAutomationRuleDetailsById(id);
         return ResponseEntity.ok(found);
     }
 
+    /**
+     * Edit info about AutomationRuleDetails by ID.
+     * @param id
+     * @param automationRuleDetails
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<AutomationRuleDetails> updateAutomationRuleDetails(@PathVariable Integer id,
                                                                              @RequestBody AutomationRuleDetails automationRuleDetails) {
@@ -44,6 +64,11 @@ public class AutomationRuleDetailsController {
         return ResponseEntity.ok(updated);
     }
 
+    /**
+     * Delete an AutomationRuleDetails by ID
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAutomationRuleDetails(@PathVariable Integer id) {
         automationRuleDetailsService.deleteAutomationRuleDetails(id);

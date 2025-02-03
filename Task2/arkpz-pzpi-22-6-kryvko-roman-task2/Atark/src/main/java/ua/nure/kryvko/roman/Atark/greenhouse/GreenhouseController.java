@@ -17,18 +17,34 @@ public class GreenhouseController {
         this.greenhouseService = greenhouseService;
     }
 
+    /**
+     * Add a new Greenhouse to the system
+     * @param greenhouse
+     * @return
+     */
     @PostMapping
     public ResponseEntity<Greenhouse> createGreenhouse(@RequestBody Greenhouse greenhouse) {
         Greenhouse savedGreenhouse = greenhouseService.saveGreenhouse(greenhouse);
         return ResponseEntity.ok(savedGreenhouse);
     }
 
+    /**
+     * Get a Greenhouse by ID
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Greenhouse> getGreenhouseById(@PathVariable Integer id) {
         Optional<Greenhouse> greenhouse = greenhouseService.getGreenhouseById(id);
         return greenhouse.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Edit data about a Greenhouse
+     * @param id
+     * @param greenhouse
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Greenhouse> updateGreenhouse(@PathVariable Integer id, @RequestBody Greenhouse greenhouse) {
         greenhouse.setId(id);
@@ -36,6 +52,11 @@ public class GreenhouseController {
         return ResponseEntity.ok(updatedGreenhouse);
     }
 
+    /**
+     * Remove a Greenhouse from the system
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGreenhouse(@PathVariable Integer id) {
         greenhouseService.deleteGreenhouseById(id);

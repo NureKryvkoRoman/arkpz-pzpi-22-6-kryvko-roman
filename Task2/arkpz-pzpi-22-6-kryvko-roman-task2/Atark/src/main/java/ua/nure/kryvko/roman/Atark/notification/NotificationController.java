@@ -17,6 +17,11 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
+    /**
+     * Add a new Notification to the system
+     * @param notification
+     * @return
+     */
     @PostMapping
     public ResponseEntity<Notification> createNotification(@RequestBody Notification notification) {
         try {
@@ -27,12 +32,23 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Get a Notification by ID
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Notification> getNotificationById(@PathVariable Integer id) {
         Optional<Notification> notification = notificationService.getNotificationById(id);
         return notification.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Edit data about a Notification
+     * @param id
+     * @param notification
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Notification> updateNotification(@PathVariable Integer id, @RequestBody Notification notification) {
         notification.setId(id);
@@ -44,6 +60,11 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Remove a Notification from the system
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable Integer id) {
         try {
