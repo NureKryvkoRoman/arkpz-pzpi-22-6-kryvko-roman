@@ -32,8 +32,8 @@ public class AutomationRule {
     @Enumerated(EnumType.STRING)
     AutomationRuleType automationRuleType;
 
-    @OneToMany(mappedBy = "automationRule")
-    List<AutomationRuleDetails> automationRuleDetails = new ArrayList<>();
+    @OneToOne(mappedBy = "automationRule")
+    AutomationRuleDetails automationRuleDetails;
 
     @OneToMany(mappedBy = "automationRule")
     List<AutomationAction> automationActions = new ArrayList<>();
@@ -76,5 +76,21 @@ public class AutomationRule {
 
     public void setAutomationRuleType(AutomationRuleType automationRuleType) {
         this.automationRuleType = automationRuleType;
+    }
+
+    public AutomationRuleDetails getAutomationRuleDetails() {
+        return automationRuleDetails;
+    }
+
+    public void setAutomationRuleDetails(AutomationRuleDetails automationRuleDetails) {
+        this.automationRuleDetails = automationRuleDetails;
+    }
+
+    public List<AutomationAction> getAutomationActions() {
+        return automationActions;
+    }
+
+    public void setAutomationActions(List<AutomationAction> automationActions) {
+        this.automationActions = automationActions;
     }
 }

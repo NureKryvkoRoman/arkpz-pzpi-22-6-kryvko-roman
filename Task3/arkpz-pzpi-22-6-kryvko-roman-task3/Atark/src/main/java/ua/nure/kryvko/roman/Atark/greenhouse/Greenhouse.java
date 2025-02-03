@@ -110,4 +110,12 @@ public class Greenhouse {
     public void setLongitude(Float longitude) {
         this.longitude = longitude;
     }
+
+    public List<Sensor> getSensors() {
+        return sensors;
+    }
+
+    public void setSensors(List<Sensor> sensors) {
+        this.sensors = sensors;
+    }
 }

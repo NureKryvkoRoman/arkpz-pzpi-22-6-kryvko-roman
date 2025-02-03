@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ua.nure.kryvko.roman.Atark.automationRule.AutomationRule;
 import ua.nure.kryvko.roman.Atark.automationRule.AutomationRuleRepository;
+import ua.nure.kryvko.roman.Atark.automationRuleDetails.AutomationRuleDetails;
 import ua.nure.kryvko.roman.Atark.controller.Controller;
 import ua.nure.kryvko.roman.Atark.controller.ControllerRepository;
 
@@ -73,5 +74,20 @@ public class AutomationActionService {
 
     public List<AutomationAction> getAllAutomationActions() {
         return automationActionRepository.findAll();
+    }
+
+    /**
+     * Processes an AutomationRule and its AutomationRuleDetails,
+     * extracts actions that depends on this rule and runs corresponding controllers.
+     * @param rule AutomationRule to process
+     * @param details AutomationRuleDetails to process
+     */
+    public void invokeActionWithRule(AutomationRule rule, AutomationRuleDetails details) {
+        List<AutomationAction> automationActionList = rule.getAutomationActions();
+        for (AutomationAction action : automationActionList) {
+            Controller controller = action.getController();
+            if (controller.isActive())
+                controller.run(details.getInterval());
+        }
     }
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import ua.nure.kryvko.roman.Atark.greenhouse.Greenhouse;
 import ua.nure.kryvko.roman.Atark.automationAction.AutomationAction;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -94,5 +95,9 @@ public class Controller {
 
     public void setControllerType(ControllerType controllerType) {
         this.controllerType = controllerType;
+    }
+
+    public void run(Duration interval) {
+        //TODO: implement
     }
 }

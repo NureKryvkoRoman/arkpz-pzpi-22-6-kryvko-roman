@@ -20,7 +20,7 @@ public class AutomationRuleDetails {
     Integer id;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "automation_rule_id", referencedColumnName = "id")
     AutomationRule automationRule;
 
