@@ -1,0 +1,16 @@
+@startuml
+actor "Сенсор" as Sensor
+actor "API" as API
+
+rectangle "Система" {
+    usecase "Завантажити конфігурацію з файлу" as UC1
+    usecase "Отримати дані спострежень з сенсору" as UC2
+    usecase "Надіслати дані до API" as UC3
+}
+
+Sensor -- UC1
+Sensor -- UC2
+Sensor -- UC3
+UC3 -- API : "Надіслати HTTP-запит"
+@enduml
+
