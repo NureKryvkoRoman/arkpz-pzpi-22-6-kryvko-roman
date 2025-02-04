@@ -1,5 +1,6 @@
 package ua.nure.kryvko.roman.Atark.greenhouse;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicInsert;
@@ -42,6 +43,7 @@ public class Greenhouse {
     Float longitude;
 
     @OneToMany(mappedBy = "greenhouse")
+    @JsonManagedReference
     List<Sensor> sensors = new ArrayList<>();
 
     @OneToMany(mappedBy = "greenhouse")

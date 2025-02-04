@@ -1,5 +1,7 @@
 package ua.nure.kryvko.roman.Atark.sensor;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicInsert;
@@ -23,6 +25,7 @@ public class Sensor {
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "greenhouse_id", referencedColumnName = "id")
+    @JsonBackReference
     Greenhouse greenhouse;
 
     @NotNull
@@ -36,7 +39,10 @@ public class Sensor {
     String name;
 
     @OneToMany(mappedBy = "sensor")
+    @JsonManagedReference
     List<SensorState> sensorStates = new ArrayList<>();
+
+    public Sensor() {}
 
     public Sensor(Greenhouse greenhouse, boolean isActive, LocalDateTime installedAt, SensorType sensorType, String name) {
         this.greenhouse = greenhouse;

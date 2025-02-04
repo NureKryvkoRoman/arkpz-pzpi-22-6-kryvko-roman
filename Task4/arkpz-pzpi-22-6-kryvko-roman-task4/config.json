@@ -1,0 +1,6 @@
+{
+  "api_url": "http://localhost:8080/api/sensor-states",
+  "sensor_id": 1,
+  "publish_interval": 10
+}
+

@@ -1,5 +1,6 @@
 package ua.nure.kryvko.roman.Atark.sensorState;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicInsert;
@@ -18,8 +19,9 @@ public class SensorState {
     Integer id;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sensor_id", referencedColumnName = "id")
+    @JsonBackReference
     Sensor sensor;
 
     @NotNull
@@ -30,6 +32,8 @@ public class SensorState {
 
     @NotNull
     String unit;
+
+    public SensorState() {}
 
     public SensorState(Sensor sensor, Date timestamp, Float value, String unit) {
         this.sensor = sensor;
