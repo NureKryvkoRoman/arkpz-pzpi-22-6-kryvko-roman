@@ -1,0 +1,96 @@
+﻿Харківський університет радіоелектроніки
+Факультет комп'ютерних наук
+Кафедра програмної інженерії
+ЗВІТ
+до лабораторної роботи №3 з дисципліни
+"Аналіз та рефакторинг коду"
+
+
+Виконав: ст. гр. ПЗПІ-22-6
+Кривко Роман Андрійович
+
+
+Перевірив
+ст. викладач кафедри ПІ
+Сокорчук Ігор Петрович
+
+
+Харків 2024
+
+3 РОЗРОБКА БІЗНЕС-ЛОГІКИ ТА ФУНКЦІЙ АДМІНІСТРУВАННЯ СЕРВЕРНОЇ ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ
+3.1 Мета роботи
+На лабораторній роботі №3 потрібно розробити бізнес-логику та функції адміністрування серверної частини програмної системи.
+3.2 Опис інженерних рішень
+3.2.1 Бізнес-логіка моніторингу стану системи
+Алгоритм для перевірки даних, що надходять від сенсорів:
+1. До системи надходять показники з сенсора у теплиці.
+2. Система перевіряє дані від сенсора у теплиці на відповідність до встановлених користувачем правил автоматизації для цієї теплиці (наприклад, вологість повинна бути не менше 60%). 
+3. Якщо дані задовольняють якесь з правил (наприклад, фактична відносна вологість, отримана з сенсора, становить 50%), то виконується дія автоматизаціЇ, що задана користувачем.
+4. Система повідомляє відповідні контролери про необхідність виконання дії (наприклад, вмикає систему поливу).
+3.2.2 Бізнес-логіка надсилання повідомлень
+1. До системи надходять показники з сенсора у теплиці.
+2. Система перевіряє дані від сенсора у теплиці на відповідність до встановлених користувачем правил автоматизації для цієї теплиці (наприклад, вологість повинна бути не менше 60%). 
+3. Якщо дані задовольняють якесь з правил (наприклад, фактична відносна вологість, отримана з сенсора, становить 50%), то користувачу надсилається повідомлення (наприклад, попередження - відносна вологість становить 50%).
+3.3 Фрагменти коду бізнес-логіки програми
+// package ua.nure.kryvko.roman.Atark.sensorState;
+@Transactional
+public SensorState saveSensorState(SensorState sensorState) {
+   Sensor owner = sensorRepository.findById(sensorState.getSensor().getId())
+           .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sensor not found"));
+   sensorState.setSensor(owner);
+
+
+   Greenhouse greenhouse = owner.getGreenhouse();
+   // Передача інформації з сенсорів до сервісу правил автоматизації
+   automationRuleService.checkSensorStateData(greenhouse, sensorState);
+   return sensorStateRepository.save(sensorState);
+}
+
+
+//package ua.nure.kryvko.roman.Atark.automationRule;
+/**
+* Checks sensor state against all the AutomationRules present in certain greenhouse,
+* passes the rule to AutomationActionService to invoke action, if the rule is applicable.
+* @param greenhouse
+* @param sensorState
+*/
+public void checkSensorStateData(Greenhouse greenhouse, SensorState sensorState) {
+   List<AutomationRule> rules = automationRuleRepository.findByGreenhouse(greenhouse);
+   for (AutomationRule rule : rules) {
+       // apply only to sensor-dependent rules
+       if (rule.automationRuleType == AutomationRuleType.SENSOR) {
+           AutomationRuleDetails details = rule.getAutomationRuleDetails();
+           try {
+               if (details.getMaxValue() < sensorState.getValue() || details.getMinValue() > sensorState.getValue()) {
+                   // Передача інформації про дії, що треба виконати, до сервісу дій автоматизації
+                   automationActionService.invokeActionWithRule(rule, details);
+               }
+           } catch (NullPointerException e) {
+               // do nothing
+           }
+       }
+   }
+}
+
+
+//package ua.nure.kryvko.roman.Atark.automationAction;
+/**
+* Processes an AutomationRule and its AutomationRuleDetails,
+* extracts actions that depends on this rule and runs corresponding controllers.
+* @param rule AutomationRule to process
+* @param details AutomationRuleDetails to process
+*/
+public void invokeActionWithRule(AutomationRule rule, AutomationRuleDetails details) {
+   List<AutomationAction> automationActionList = rule.getAutomationActions();
+   for (AutomationAction action : automationActionList) {
+       Controller controller = action.getController();
+       if (controller.isActive())
+           // Запуск IoT-контролера
+           controller.run(details.getInterval());
+   }
+}
+
+
+Висновок
+Під час виконання лабораторної роботі №3 було розроблено бізнес-логику та функції адміністрування серверної частини програмної системи.
+Посилання на відео: https://youtu.be/z8gsWLYghNk
